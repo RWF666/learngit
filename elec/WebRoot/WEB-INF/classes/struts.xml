@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+	"-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+	"http://struts.apache.org/dtds/struts-2.3.dtd">
+<struts>
+	<!-- 开发模式 -->
+	<constant name="struts.devMode" value="true"></constant>
+	<!-- ui主题，简单主题 -->
+	<constant name="struts.ui.theme" value="simple"></constant>
+	<!-- 修改struts2的后缀 改成.do-->
+	<constant name="struts.action.extension" value="do"></constant>
+	<!-- 改变struts2上传文件的大小 -->
+	<constant name="struts.multipart.maxSize" value="209715200"></constant>
+	<!-- 全局包都要继承 -->
+	<package name="global" extends="json-default">
+		<!-- 自定义拦截器，实现异常处理，实现细颗粒权限控制 -->
+		<interceptors>
+		   <!-- 声明拦截器 -->
+		   <interceptor name="errorAndLimitInterceptor" class="com.weige.elec.utils.ErrorAndLimitInterceptor" />
+		   <!-- 配置拦截器栈 -->
+		   <interceptor-stack name="myErrorAndLimitInterceptor">
+		               <interceptor-ref name="defaultStack" />
+		               <interceptor-ref name="errorAndLimitInterceptor" >
+		               		<param name="excludeMethods">menuHome,title,left,change,loading,logout,alermStation,alermDevice,showMenu</param>
+		               </interceptor-ref>
+		   </interceptor-stack>
+		</interceptors>
+		<!-- 覆盖底层的拦截器栈 对包中的所有action都有效 -->
+		<default-interceptor-ref name="myErrorAndLimitInterceptor"/>
+		 <!-- 全局转发 -->
+	    <global-results>
+	    	<result name="close">/close.jsp</result>
+	    	<result name="errorMsg">/errorMsg.jsp</result>
+	    </global-results>
+	    <global-exception-mappings>
+	    	<exception-mapping result="errorMsg" exception="java.lang.Exception"></exception-mapping>
+		</global-exception-mappings>
+	</package>
+	<!-- 系统管理 -->
+	<package name="system" namespace="/system" extends="global">
+		<!-- 测试 -->
+		<action name="elecTextAction_*" class="elecTextAction" method="{1}">
+			<result name="save">/system/textAdd.jsp</result>
+		</action>
+		<!-- 系统登录 -->
+		<action name="elecMenuAction_*" class="elecMenuAction" method="{1}">
+			<result name="menuHome">/WEB-INF/page/menu/home.jsp</result>
+			<result name="title">/WEB-INF/page/menu/title.jsp</result>
+			<result name="left">/WEB-INF/page/menu/left.jsp</result>
+			<result name="change">/WEB-INF/page/menu/change.jsp</result>
+			<result name="loading">/WEB-INF/page/menu/loading.jsp</result>
+			<result name="logout" type="redirect">/index.jsp</result>
+			<result name="alermStation">/WEB-INF/page/menu/alermStation.jsp</result>
+			<result name="alermDevice">/WEB-INF/page/menu/alermDevice.jsp</result>
+			<result name="logonError">/WEB-INF/page/menu/index.jsp</result>
+			<result name="showMenu" type="json"></result>
+		</action>
+		<!-- 运行监控 -->
+		<action name="elecCommonMsgAction_*" class="elecCommonMsgAction" method="{1}">
+			<result name="home">/WEB-INF/page/system/actingIndex.jsp</result>
+			<result name="save" type="redirectAction">
+				<param name="actionName">elecCommonMsgAction_home.do</param>
+			</result>
+			<result name="actingView">/WEB-INF/page/system/actingView.jsp</result>
+		</action>
+		<!-- 数据字典 -->
+		<action name="elecSystemDDLAction_*" class="elecSystemDDLAction" method="{1}">
+			<result name="home">/WEB-INF/page/system/dictionaryIndex.jsp</result>
+			<result name="edit">/WEB-INF/page/system/dictionaryEdit.jsp</result>
+			<result name="save" type="redirectAction">
+				<param name="actionName">elecSystemDDLAction_home.do</param>
+			</result>
+		</action>
+		<!-- 用户管理 -->
+		<action name="elecUserAction_*" class="elecUserAction" method="{1}">
+			<result name="home">/WEB-INF/page/system/userIndex.jsp</result>
+			<result name="add">/WEB-INF/page/system/userAdd.jsp</result>
+			<!-- 如果是List集合转换成json数组,如果是Object装换成json对象 -->
+			<result name="findJctUnit" type="json">
+				<param name="includeProperties">\[\d+\]\.ddlCode,\[\d+\]\.ddlName</param>
+			</result>
+			<result name="checkUser" type="json">
+				<!-- root表示，root指定message就表示查找栈顶中是否有message属性，如果有直接通过message的get方法，获取值放置到栈顶 -->
+				<param name="root">message</param>
+				<param name="includeProperties">message</param>
+			</result>
+			<result name="edit" >/WEB-INF/page/system/userEdit.jsp</result>
+			<result name="download" type="stream">
+				<param name="inputName">inputStream</param>
+				<param name="contentDisposition">attachment;filename="${#request.filename}"</param>
+				<param name="bufferSize">1024</param>
+			</result>
+			<result name="input">/WEB-INF/page/system/error.jsp</result>
+			<result name="delete" type="redirectAction">
+				<param name="actionName">elecUserAction_home.do?pageNO=${#request.pageNO}</param>
+			</result>
+			<result name="redirectEdit" type="redirectAction">
+				<param name="actionName">elecUserAction_edit.do?userID=${userID}&amp;roleflag=${roleflag}</param>
+			</result>
+			<result name="list">/WEB-INF/page/system/userList.jsp</result>
+			<result name="exportExcel" type="stream">
+				<param name="contentType">application/vnd.ms-excel</param>
+				<param name="inputName">inputStream</param>
+				<param name="contentDisposition">attachment;filename="${#request.filename}"</param>
+				<param name="bufferSize">1024</param>
+			</result>
+			<result name="exportPage">/WEB-INF/page/system/userImport.jsp</result>
+			<result name="chartUser">/WEB-INF/page/system/userReport.jsp</result>
+			<result name="chartSexFCF">/WEB-INF/page/system/userReportFCF.jsp</result>
+			
+		</action>
+		<!-- 角色管理 -->
+		<action name="elecRoleAction_*" class="elecRoleAction" method="{1}">
+			<result name="home">/WEB-INF/page/system/roleIndex.jsp</result>
+			<result name="edit">/WEB-INF/page/system/roleEdit.jsp</result>
+			<result name="save" type="redirectAction">
+				<param name="actionName">elecRoleAction_home.do</param>
+			</result>
+		</action>
+		<!-- 导出设置 -->
+		<action name="elecExportFieldsAction_*" class="elecExportFieldsAction" method="{1}">
+			<result name="setExportField">/WEB-INF/page/system/exportExcel.jsp</result>
+		</action>
+	</package>
+	
+	<!-- 技术资料图纸管理 -->
+	<package name="datachart" namespace="/datachart" extends="global">
+		<!-- 资料图纸管理 -->
+		<action name="elecFileUploadAction_*" class="elecFileUploadAction" method="{1}">
+			<result name="home">/WEB-INF/page/dataChart/dataChartIndex.jsp</result>
+			<result name="add">/WEB-INF/page/dataChart/dataChartAdd.jsp</result>
+			<result name="save" type="redirectAction">
+				<param name="actionName"><![CDATA[elecFileUploadAction_add.do?projId=${projId}&belongTo=${belongTo}]]></param>
+			</result>
+			<result name="addList">/WEB-INF/page/dataChart/dataChartAddList.jsp</result>
+			<result name="download" type="stream">
+				<param name="inputName">inputStream</param>
+				<param name="contentDisposition"><!-- inline -->attachment;filename="${#request.filename}"</param>
+				<param name="bufferSize">1024</param>
+			</result>
+			<result name="luceneHome">/WEB-INF/page/dataChart/dataChartIndex.jsp</result>
+			<result name="delete" type="redirectAction">
+				<param name="actionName">elecFileUploadAction_luceneHome.do?projId=${hideProjId}&amp;belongTo=${hideBelongTo}&amp;queryString=${hideQueryString}</param>
+			</result>
+		</action>
+	</package>
+</struts>

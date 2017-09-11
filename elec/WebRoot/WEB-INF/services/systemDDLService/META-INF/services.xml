@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?><!-- This file was auto-generated from WSDL --><!-- by the Apache Axis2 version: 1.7.6  Built on : Jul 30, 2017 (09:08:31 BST) --><serviceGroup>
+    <service name="IWebSystemDDLService">
+        <messageReceivers>
+            <messageReceiver mep="http://www.w3.org/ns/wsdl/in-out" class="com.weige.elec.webservice.IWebSystemDDLServiceMessageReceiverInOut"/>
+        </messageReceivers>
+        <parameter name="ServiceClass">com.weige.elec.webservice.IWebSystemDDLServiceSkeleton</parameter>
+        <parameter name="useOriginalwsdl">true</parameter>
+        <parameter name="modifyUserWSDLPortAddress">true</parameter>
+        <operation name="findSystemByKeyword" mep="http://www.w3.org/ns/wsdl/in-out" namespace="http://webservice.elec.weige.com">
+            <actionMapping>urn:findSystemByKeyword</actionMapping>
+            <outputActionMapping>urn:findSystemByKeywordResponse</outputActionMapping>
+        </operation>
+    </service>
+</serviceGroup>
