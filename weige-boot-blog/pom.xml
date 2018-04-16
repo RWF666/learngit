@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>weige.boot.blog</groupId>
+	<artifactId>weige-boot-blog</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<packaging>pom</packaging>
+	
+	<parent>
+	    <groupId>org.springframework.boot</groupId>
+	    <artifactId>spring-boot-starter-parent</artifactId>
+	    <version>1.5.7.RELEASE</version>
+	</parent>
+	
+	<modules>
+		<module>blog-prototype</module>
+		<module>blog-user</module>
+		<module>blog-auth</module>
+		<module>blog-blog</module>
+		<module>blog-file-server</module>
+		<module>blog-comment</module>
+		<module>blog-vote</module>
+		<module>blog-catalog</module>
+	</modules>
+	
+	<build>
+		<plugins>
+			<!-- 这是spring boot devtool plugin -->
+			<plugin>
+	            <groupId>org.springframework.boot</groupId>
+	            <artifactId>spring-boot-maven-plugin</artifactId>
+	            <configuration>
+	          		<!-- fork :  如果没有该项配置，那么devtools不会起作用，即应用不会restart -->
+	                <fork>true</fork>
+	            </configuration>
+	        </plugin>
+		</plugins>
+	</build>
+</project>
